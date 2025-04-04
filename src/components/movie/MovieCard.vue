@@ -3,11 +3,27 @@
     class="bg-gray-700 rounded-xl overflow-hidden max-h-96 min-h-96 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-[1.03] hover:-translate-y-2"
     @click="handleSelect"
   >
-    <img
-      :src="movie.primaryImage"
-      alt="Poster"
-      class="w-full h-3/4 object-cover"
-    />
+    <div class="w-full h-3/4 relative bg-gray-800">
+      <div
+        v-if="!imageLoaded && !imageError"
+        class="absolute inset-0 flex items-center justify-center"
+      >
+        <div
+          class="w-10 h-10 border-4 border-gray-500 border-t-purple-500 rounded-full animate-spin"
+        ></div>
+      </div>
+
+      <img
+        :src="movie.primaryImage"
+        alt="Poster"
+        class="w-full h-full object-cover"
+        :class="{ 'opacity-0': !imageLoaded }"
+        loading="lazy"
+        @load="imageLoaded = true"
+        @error="handleImageError"
+      />
+    </div>
+
     <div class="p-3">
       <h3 class="text-sm font-bold line-clamp-2 min-h-[3rem]">
         {{ movie.primaryTitle }}
@@ -29,8 +45,9 @@
 
 <script lang="ts">
 import type { Movie } from "../../types/Movie";
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { Star, Clock } from "lucide-vue-next";
+
 export default defineComponent({
   name: "MovieCard",
   props: {
@@ -45,11 +62,36 @@ export default defineComponent({
   },
   emits: ["select"],
   setup(props, { emit }) {
+    const imageLoaded = ref(false);
+    const imageError = ref(false);
+
+    const handleImageError = () => {
+      imageError.value = true;
+      imageLoaded.value = false;
+    };
+
     const handleSelect = () => {
       emit("select", props.movie.id);
     };
+
+    onMounted(() => {
+      setTimeout(() => {
+        if (!imageLoaded.value && !imageError.value) {
+          const img = new Image();
+          img.onload = () => {
+            imageLoaded.value = true;
+          };
+          img.onerror = handleImageError;
+          img.src = props.movie.primaryImage;
+        }
+      }, 3000);
+    });
+
     return {
       handleSelect,
+      imageLoaded,
+      imageError,
+      handleImageError,
     };
   },
 });

@@ -37,6 +37,10 @@ Movie Explorer is a Vue.js-based web application that allows users to explore an
 
 4. Open the application in your browser at `http://localhost:5173`.
 
+## Known Limitations
+
+Image Loading Performance: Since the API doesn't offer limit and pagination parameters, pagination is implemented on the frontend. This may cause performance issues with image loading, especially when browsing large collections of movies.
+
 ## Build for Production
 
 To build the project for production, run:
