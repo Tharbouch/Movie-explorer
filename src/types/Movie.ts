@@ -3,6 +3,7 @@ export interface Movie {
   url: string;
   primaryTitle: string;
   originalTitle: string;
+  trailer: string;
   type: string;
   description: string;
   primaryImage: string;

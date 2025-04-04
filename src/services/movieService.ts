@@ -3,7 +3,7 @@ import type { Movie, MovieDetail } from "../types/Movie";
 
 export const getMovies = async (): Promise<Movie[]> => {
   try {
-    const response = await apiClient.get("/imdb/movies");
+    const response = await apiClient.get("/imdb/top250-movies");
     return response.data || [];
   } catch (error) {
     console.error("Error fetching movies:", error);

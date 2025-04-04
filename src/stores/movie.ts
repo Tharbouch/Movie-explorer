@@ -10,6 +10,9 @@ export const useMovieStore = defineStore("movie", () => {
   const error = ref<string | null>(null);
 
   const fetchMovies = async () => {
+    if (movies.value.length > 0) {
+      return;
+    }
     loading.value = true;
     error.value = null;
     try {
@@ -26,6 +29,12 @@ export const useMovieStore = defineStore("movie", () => {
     error.value = null;
     try {
       selectedMovie.value = await getMovieDetails(movieId);
+      if (selectedMovie.value && selectedMovie.value.trailer) {
+        selectedMovie.value.trailer = selectedMovie.value.trailer.replace(
+          "watch?v=",
+          "embed/"
+        );
+      }
     } catch (err) {
       error.value = "Failed to fetch movie details";
     } finally {
